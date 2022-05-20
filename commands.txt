@@ -1,0 +1,3 @@
+sequelize-auto -h localhost -d foodwaste -u root -x root -p 3306  --dialect mysql -c "./src/config/config.js" -o "./src/api/models"
+
+sequelize-auto -h sql4.freesqldatabase.com -d sql4487216 -u sql4487216 -x aAT31p5pnp -p 3306  --dialect mysql -c "./src/config/config.js" -o "./src/api/models"
