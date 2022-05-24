@@ -1,18 +1,20 @@
 const httpStatus = require('http-status');
-const appointments = require('../services/appointment.service');
+const fooditem = require('../services/fooditem.services');
 const APIError = require('../errors/api-error');
 const { isEmpty } = require('lodash');
 
 
 exports.create = async (req, res, next) => {
   try {
-    var Data = req.body;
+    var {Data} = req.body;
+    Data=JSON.parse(Data)
     if(Data==undefined||isEmpty(Data))return next(new APIError({
       status:httpStatus.BAD_REQUEST,
       message:"BAD REQUEST"
     }))
     Data.IsActive=true
-    var result=await appointments.create(Data);
+    Data.ImageSrc=req.file.path.replace(/\\/g, "/")
+    var result=await fooditem.create(Data);
     if(result.response){
         res.status(httpStatus.CREATED);
         res.json({
@@ -29,11 +31,34 @@ exports.create = async (req, res, next) => {
   }
 };
 
-
+exports.update = async (req, res, next) =>{
+  try{
+      var {Data} = req.body;
+      Data=JSON.parse(Data)
+      if(Data==undefined||isEmpty(Data))return next(new APIError({
+        status:httpStatus.BAD_REQUEST,
+        message:"BAD REQUEST"
+      }))
+      Data.ImageSrc=req.file.path.replace(/\\/g, "/")
+      Data.FoodItemID=req.params.id
+          var result=await fooditem.update(Data)
+          if(result.response){
+              res.status(httpStatus.OK);
+              res.json({
+                  Status:{"code":httpStatus.OK,
+                  "message":"Success"},Data:{}
+              })
+          }else{
+            return next(result.error)
+          }
+  }catch(error){
+     return next(error)
+  }
+};
 
 exports.all = async(req,res,next)=>{
   try{
-      var result=await appointments.active()
+      var result=await fooditem.active()
       if(result.response){
           res.status(httpStatus.OK).json({
              Status:{ code:httpStatus.OK,
@@ -52,7 +77,7 @@ exports.all = async(req,res,next)=>{
 exports.id=async(req,res,next)=>{
   try{
     var id=req.params.id
-    var result=await appointments.id(id)
+    var result=await fooditem.id(id)
     if(result.response){
         res.status(httpStatus.OK).json({
             Status:{code:httpStatus.OK,
@@ -70,7 +95,7 @@ return next(error)
 exports.delete=async(req,res,next)=>{
   try{
     var id=req.params.id
-    var result=await appointments.delete(id)
+    var result=await fooditem.delete(id)
     if(result.response){
         res.status(httpStatus.OK).json({
             Status:{code:httpStatus.OK,
@@ -85,26 +110,3 @@ return next(error)
 }
 }
 
-
-exports.checkAvailability=async(req,res,next)=>{
-  try{
-    var Data=req.body
-    var result=await appointments.checkAvailability(Data)
-    if(result.response){
-        res.status(httpStatus.OK).json({
-            Status:{code:httpStatus.OK,
-            message:"Success"},
-            Data:{message:"Available"}
-        })
-    }else{
-      res.status(httpStatus.OK).json({
-        Status:{code:httpStatus.OK,
-        message:"Success"},
-        Data:{message: "Doctor Not Available"}
-    })
-
-    }
-}catch(error){
-return next(error)
-}
-}

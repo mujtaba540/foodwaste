@@ -8,11 +8,12 @@ const httpStatus = require('http-status');
 exports.create = async (Data) => {
     try {
         await db.authenticate()
-        await models.appointments.create(Data)
+        await models.fooditem.create(Data)
         return {
             response: true
         }
     } catch (error) {
+        console.log(error.message)
         return {
             response: false,
             error: new APIError({
@@ -26,7 +27,7 @@ exports.create = async (Data) => {
 exports.active = async () => {
     try {
         await db.authenticate();
-        var result = await models.appointments.findAll()
+        var result = await models.fooditem.findAll({where:{IsActive:true}})
         if (result !== null) {
             return {
                 response: true,
@@ -44,8 +45,8 @@ exports.active = async () => {
 exports.id = async (id) => {
     try {
         await db.authenticate();
-        var result = await models.appointments.findAll({
-            where: { userID: id }
+        var result = await models.fooditem.findOne({
+            where: { FoodItemID: id,IsActive:true }
         })
         if (result == null||result.length==0) {
             return {
@@ -60,14 +61,15 @@ exports.id = async (id) => {
             data: result
         }
     } catch (error) {
+        console.log(error.message)
         return { response: false, error: new APIError(httpStatus.INTERNAL_SERVER_ERROR) }
     }
 }
 exports.delete = async (id) => {
     try {
         await db.authenticate();
-        var result = await models.appointments.destroy({
-            where: { appointmentsID: id }
+        var result = await models.fooditem.update({IsActive:false},{
+            where: { FoodItemID: id }
         })
         if (result == null||result.length==0) {
             return {
@@ -85,25 +87,26 @@ exports.delete = async (id) => {
         return { response: false, error: new APIError(httpStatus.INTERNAL_SERVER_ERROR) }
     }
 }
-
-exports.checkAvailability = async (Data) => {
+exports.update = async (Data) => {
     try {
         await db.authenticate();
-        var result = await models.appointments.findOne({
-            where: { doctorName: Data.doctorName,appointmentDate:Data.appointmentDate,aptTime:Data.aptTime }
-        })
+        var result = await models.fooditem.findOne({ where: { FoodItemID: Data.FoodItemID } })
+        
         if (result == null) {
             return {
-                response: true,
+                resposne: false, error: new APIError({
+                    message: "NOT FOUND",
+                    status: httpStatus.NOT_FOUND
+                })
             }
+        } else {
+            await models.fooditem.update(Data, { where: { FoodItemID: Data.FoodItemID } })
+            return { response: true }
         }
-        return {
-            resposne: false, error: new APIError({
-                status: httpStatus.OK
-            })
-        }
+
     } catch (error) {
-        console.log(error)
-        return { response: false, error: new APIError(httpStatus.INTERNAL_SERVER_ERROR) }
+        console.log(error.message)
+        return { resposne: false, error: new APIError(httpStatus.INTERNAL_SERVER_ERROR) }
+
     }
-}
+};

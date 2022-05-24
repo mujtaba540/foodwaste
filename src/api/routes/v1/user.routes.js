@@ -14,6 +14,7 @@ router
   .route('/:id')
   .get(controller.id)
   .put(controller.update)
+  .patch(controller.delete)
 
 router
   .route('/login')

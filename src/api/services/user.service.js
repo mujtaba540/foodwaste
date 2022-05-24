@@ -27,7 +27,7 @@ exports.register = async (Data) => {
 exports.update = async (Data) => {
     try {
         await db.authenticate();
-        var result = await models.user.findOne({ where: { userID: Data.userID } })
+        var result = await models.user.findOne({ where: { UserID: Data.UserID } })
         if (result == null) {
             return {
                 resposne: false, error: new APIError({
@@ -36,7 +36,30 @@ exports.update = async (Data) => {
                 })
             }
         } else {
-            await models.user.update(Data, { where: { userID: Data.userID } })
+            await models.user.update(Data, { where: { UserID: Data.UserID } })
+            return { response: true }
+        }
+
+    } catch (error) {
+        console.log(error.message)
+        return { resposne: false, error: new APIError(httpStatus.INTERNAL_SERVER_ERROR) }
+
+    }
+};
+
+exports.delete = async (id) => {
+    try {
+        await db.authenticate();
+        var result = await models.user.findOne({ where: { UserID: id } })
+        if (result == null) {
+            return {
+                resposne: false, error: new APIError({
+                    message: "NOT FOUND",
+                    status: httpStatus.NOT_FOUND
+                })
+            }
+        } else {
+            await models.user.update({IsActive:false}, { where: { UserID: id } })
             return { response: true }
         }
 
@@ -46,27 +69,15 @@ exports.update = async (Data) => {
 
     }
 };
-
-
-
 exports.id = async (id) => {
     try {
         await db.authenticate();
         var result = await models.user.findOne({
-            where: { userID: id },
+            where: { UserID: id,IsActive:true },
             include: [{
-                model: models.appointments,
-                as: "appointments"
-            },
-            {
-                model: models.journal,
-                as: "journals"
-            },
-            {
-                model: models.quiz,
-                as: "quizzes"
-            }
-            ]
+                model: models.fooditem,
+                as: "fooditems"
+            }]
         })
         if (result == null) {
             return {
@@ -84,20 +95,15 @@ exports.id = async (id) => {
         return { response: false, error: new APIError(httpStatus.INTERNAL_SERVER_ERROR) }
     }
 }
+
 exports.active = async () => {
     try {
         await db.authenticate();
-        var result = await models.user.findAll({
+        var result = await models.user.findAll({where:{IsActive:true}}
+            ,{
             include: [{
-                model: models.appointments,
-                as: "appointments"
-            }, {
-                model: models.journal,
-                as: "journals"
-            },
-            {
-                model: models.quiz,
-                as: "quizzes"
+                model: models.fooditem,
+                as: "fooditems"
             }]
         })
         if (result !== null) {
@@ -118,17 +124,10 @@ exports.login = async (Data) => {
     try {
         await db.authenticate()
         var result = await models.user.findOne({
-            where: { email: Data.email, password: Data.password },
+            where: { Email: Data.Email, Password: Data.Password },
             include: [{
-                model: models.appointments,
-                as: "appointments"
-            }, {
-                model: models.journal,
-                as: "journals"
-            },
-            {
-                model: models.quiz,
-                as: "quizzes"
+                model: models.fooditem,
+                as: "fooditems"
             }]
         })
         if (result != null) {

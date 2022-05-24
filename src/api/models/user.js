@@ -8,23 +8,23 @@ module.exports = function(sequelize, DataTypes) {
       primaryKey: true
     },
     Name: {
-      type: DataTypes.STRING(45),
+      type: DataTypes.TEXT,
       allowNull: true
     },
     Email: {
-      type: DataTypes.STRING(45),
+      type: DataTypes.TEXT,
       allowNull: true
     },
     Password: {
-      type: DataTypes.STRING(45),
+      type: DataTypes.TEXT,
       allowNull: true
     },
     Age: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.BIGINT,
       allowNull: true
     },
     Gender: {
-      type: DataTypes.STRING(45),
+      type: DataTypes.TEXT,
       allowNull: true
     },
     IsActive: {
@@ -34,20 +34,12 @@ module.exports = function(sequelize, DataTypes) {
   }, {
     sequelize,
     tableName: 'user',
+    schema: 'foodwaste',
     timestamps: false,
     indexes: [
       {
-        name: "PRIMARY",
+        name: "user_pkey",
         unique: true,
-        using: "BTREE",
-        fields: [
-          { name: "UserID" },
-        ]
-      },
-      {
-        name: "iduser_UNIQUE",
-        unique: true,
-        using: "BTREE",
         fields: [
           { name: "UserID" },
         ]

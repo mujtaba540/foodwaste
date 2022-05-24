@@ -1,5 +1,5 @@
 const express = require('express');
-const controller = require('../../controllers/quiz.controller');
+const controller = require('../../controllers/category.controller');
 const router = express.Router();
 
 router
@@ -11,5 +11,7 @@ router
 router
     .route('/:id')
     .get(controller.id)
+    .patch(controller.delete)
+    .put(controller.update)
 
 module.exports = router;

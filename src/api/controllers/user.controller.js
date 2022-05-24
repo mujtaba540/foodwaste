@@ -45,7 +45,7 @@ exports.update = async (req, res, next) =>{
           status:httpStatus.BAD_REQUEST,
           message:"BAD REQUEST"
         }))
-        Data.userID=req.params.id
+        Data.UserID=req.params.id
             var result=await user.update(Data)
             if(result.response){
                 res.status(httpStatus.OK);
@@ -59,6 +59,24 @@ exports.update = async (req, res, next) =>{
     }catch(error){
        return next(error)
     }
+};
+
+exports.delete = async (req, res, next) =>{
+  try{
+          id=req.params.id
+          var result=await user.delete(id)
+          if(result.response){
+              res.status(httpStatus.OK);
+              res.json({
+                  Status:{"code":httpStatus.OK,
+                  "message":"Success"},Data:{}
+              })
+          }else{
+            return next(result.error)
+          }
+  }catch(error){
+     return next(error)
+  }
 };
 
 
