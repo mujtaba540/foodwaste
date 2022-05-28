@@ -42,6 +42,10 @@ module.exports = function(sequelize, DataTypes) {
     ImageSrc: {
       type: DataTypes.TEXT,
       allowNull: true
+    },
+    IsExpired: {
+      type: DataTypes.BOOLEAN,
+      allowNull: true
     }
   }, {
     sequelize,
