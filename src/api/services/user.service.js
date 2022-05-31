@@ -7,6 +7,7 @@ const httpStatus = require('http-status');
 
 exports.register = async (Data) => {
     try {
+        console.log(Data)
         await db.authenticate()
         await models.user.create(Data)
         return {
