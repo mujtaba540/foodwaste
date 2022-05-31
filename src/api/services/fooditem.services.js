@@ -18,8 +18,8 @@ exports.create = async (Data) => {
         return {
             response: false,
             error: new APIError({
-                status:httpStatus.BAD_REQUEST||httpStatus.INTERNAL_SERVER_ERROR,
-                message:error.message||"INTERAL SERVER ERROR"
+                status: httpStatus.BAD_REQUEST || httpStatus.INTERNAL_SERVER_ERROR,
+                message: error.message || "INTERAL SERVER ERROR"
             })
         }
     }
@@ -28,7 +28,7 @@ exports.create = async (Data) => {
 exports.active = async () => {
     try {
         await db.authenticate();
-        var result = await models.fooditem.findAll({where:{IsActive:true}})
+        var result = await models.fooditem.findAll({ where: { IsActive: true } })
         if (result !== null) {
             return {
                 response: true,
@@ -47,9 +47,9 @@ exports.id = async (id) => {
     try {
         await db.authenticate();
         var result = await models.fooditem.findOne({
-            where: { FoodItemID: id,IsActive:true }
+            where: { FoodItemID: id, IsActive: true }
         })
-        if (result == null||result.length==0) {
+        if (result == null || result.length == 0) {
             return {
                 resposne: false, error: new APIError({
                     message: "NOT FOUND",
@@ -69,10 +69,10 @@ exports.id = async (id) => {
 exports.delete = async (id) => {
     try {
         await db.authenticate();
-        var result = await models.fooditem.update({IsActive:false},{
+        var result = await models.fooditem.update({ IsActive: false }, {
             where: { FoodItemID: id }
         })
-        if (result == null||result.length==0) {
+        if (result == null || result.length == 0) {
             return {
                 resposne: false, error: new APIError({
                     message: "NOT FOUND",
@@ -92,7 +92,7 @@ exports.update = async (Data) => {
     try {
         await db.authenticate();
         var result = await models.fooditem.findOne({ where: { FoodItemID: Data.FoodItemID } })
-        
+
         if (result == null) {
             return {
                 resposne: false, error: new APIError({
@@ -115,10 +115,34 @@ exports.update = async (Data) => {
 exports.itemsByUserId = async (id) => {
     try {
         await db.authenticate();
-         var result = await models.fooditem.findAll({
-            where: { UserID: id,IsActive:true }
+        var result = await models.fooditem.findAll({
+            where: { UserID: id, IsActive: true }
         })
-        if (result == null||result.length==0) {
+        if (result == null || result.length == 0) {
+            return {
+                resposne: false, error: new APIError({
+                    message: "NOT FOUND",
+                    status: httpStatus.NOT_FOUND
+                })
+            }
+        }
+        return {
+            response: true,
+            data: result
+        }
+    } catch (error) {
+        console.log(error.message)
+        return { response: false, error: new APIError(httpStatus.INTERNAL_SERVER_ERROR) }
+    }
+}
+
+exports.itemsByCategoryId = async (userid,catid) => {
+    try {
+        await db.authenticate();
+        var result = await models.fooditem.findAll({
+            where: { CategoryID: catid,UserID:userid, IsActive: true }
+        })
+        if (result == null || result.length == 0) {
             return {
                 resposne: false, error: new APIError({
                     message: "NOT FOUND",
@@ -139,6 +163,7 @@ exports.itemsByUserId = async (id) => {
 exports.notificationDates = async (id) => {
     try {
         await db.authenticate();
+        await models.fooditem.update({ IsExpired: true }, { where: { ExpiryDate: { [Op.lte]: dateToday } } })
         var result = await models.fooditem.findAll({ where: { UserID: id } })
         if (result == null) {
             return {
@@ -148,44 +173,22 @@ exports.notificationDates = async (id) => {
                 })
             }
         } else {
-            for(var i=0;i<result.length;i++){
-                if(result[i].NotifyDate!=null){
-                     dif=Math.abs( new Date(result[i].ExpiryDate)-new Date(result[i].NotifyDate))
-                     days = dif/(1000 * 3600 * 24)
-                     result[i].dataValues.DaysRemaining=days
+            var dateToday = new Date();
+            for (var i = 0; i < result.length; i++) {
+                if (result[i].NotifyDate != null) {
+                    dif = Math.abs(new Date(result[i].NotifyDate) - new Date())
+                    days = dif / (1000 * 3600 * 24)
+                    result[i].dataValues.DaysRemaining = Math.trunc(days)
 
+                } else {
+                    result[i].dataValues.DaysRemaining = 0
                 }
             }
-            return { 
-                response: true,
-                data:result
-             }
-        }
-
-    } catch (error) {
-        console.log(error.message)
-        return { resposne: false, error: new APIError(httpStatus.INTERNAL_SERVER_ERROR) }
-
-    }
-};
-
-exports.allNonExpiredItems = async (id) => {
-    try {
-        var dateToday=new Date();
-        await db.authenticate();
-        await models.fooditem.update({IsExpired:true},{where:{ExpiryDate:{ [Op.lte]: dateToday}}})
-        var result = await models.fooditem.findAll({ where: { IsActive: true,UserID:id } })
-        if (result == null) {
             return {
-                resposne: false, error: new APIError({
-                    message: "NOT FOUND",
-                    status: httpStatus.NOT_FOUND
-                })
+                response: true,
+                data: result
             }
         }
-        return { response: true,
-        data:result }
-
 
     } catch (error) {
         console.log(error.message)
@@ -193,6 +196,33 @@ exports.allNonExpiredItems = async (id) => {
 
     }
 };
+
+// exports.allNonExpiredItems = async (id) => {
+//     try {
+//         var dateToday = new Date();
+//         await db.authenticate();
+//         await models.fooditem.update({ IsExpired: true }, { where: { ExpiryDate: { [Op.lte]: dateToday } } })
+//         var result = await models.fooditem.findAll({ where: { IsActive: true, UserID: id } })
+//         if (result == null) {
+//             return {
+//                 resposne: false, error: new APIError({
+//                     message: "NOT FOUND",
+//                     status: httpStatus.NOT_FOUND
+//                 })
+//             }
+//         }
+//         return {
+//             response: true,
+//             data: result
+//         }
+
+
+//     } catch (error) {
+//         console.log(error.message)
+//         return { resposne: false, error: new APIError(httpStatus.INTERNAL_SERVER_ERROR) }
+
+//     }
+// };
 
 
 

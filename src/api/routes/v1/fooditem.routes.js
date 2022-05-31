@@ -12,9 +12,15 @@ router
     .route('/notificationDates/:id')
     .get(controller.notificationDates)
 
+// router
+//     .route('/nonexpired/:id')
+//     .get(controller.allNonExpiredItems)
+
+
 router
-    .route('/nonexpired/:id')
-    .get(controller.allNonExpiredItems)
+    .route('/categoryid/')
+    .get(controller.itemsByCategoryId)
+
 
 router
     .route('/userid/:id')

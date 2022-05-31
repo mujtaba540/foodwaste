@@ -139,18 +139,38 @@ exports.notificationDates = async (req, res, next) => {
   }
 };
 
-exports.allNonExpiredItems = async (req, res, next) => {
+// exports.allNonExpiredItems = async (req, res, next) => {
+//   try {
+//     id=req.params.id
+//     var result = await fooditem.allNonExpiredItems(id)
+//     if (result.response) {
+//       res.status(httpStatus.OK);
+//       res.json({
+//         Status: {
+//           "code": httpStatus.OK,
+//           "message": "Success"
+//         }, Data: {
+//           data:result.data}
+//       })
+//     } else {
+//       return next(result.error)
+//     }
+//   } catch (error) {
+//     return next(error)
+//   }
+// };
+
+exports.itemsByUserId = async (req, res, next) => {
   try {
-    id=req.params.id
-    var result = await fooditem.allNonExpiredItems(id)
+    var id = req.params.id
+    var result = await fooditem.itemsByUserId(id)
     if (result.response) {
-      res.status(httpStatus.OK);
-      res.json({
+      res.status(httpStatus.OK).json({
         Status: {
-          "code": httpStatus.OK,
-          "message": "Success"
-        }, Data: {
-          data:result.data}
+          code: httpStatus.OK,
+          message: "Success"
+        },
+        Data: { data: result.data }
       })
     } else {
       return next(result.error)
@@ -158,12 +178,15 @@ exports.allNonExpiredItems = async (req, res, next) => {
   } catch (error) {
     return next(error)
   }
-};
+}
 
-exports.itemsByUserId = async (req, res, next) => {
+exports.itemsByCategoryId = async (req, res, next) => {
   try {
-    var id = req.params.id
-    var result = await fooditem.itemsByUserId(id)
+    var userid = req.query.userid
+    var catid = req.query.catid
+
+    console.log(userid+" "+catid)
+    var result = await fooditem.itemsByCategoryId(userid,catid)
     if (result.response) {
       res.status(httpStatus.OK).json({
         Status: {
