@@ -1,3 +1,9 @@
 sequelize-auto -h localhost -d foodwaste -u root -x root -p 3306  --dialect mysql -c "./src/config/config.js" -o "./src/api/models"
 
+sequelize-auto -h localhost -d postgres -u postgres -x root -p 5432  --dialect postgres -c "./src/config/config.js" -o "./src/api/models" -s foodwaste
 
+DB_HOST=localhost
+DB_DATABASE=foodwaste
+DB_USER=root
+DB_PASSWORD=root
+DB_PORT=3306

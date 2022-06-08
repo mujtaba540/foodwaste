@@ -37,7 +37,7 @@ CREATE TABLE `category` (
 
 LOCK TABLES `category` WRITE;
 /*!40000 ALTER TABLE `category` DISABLE KEYS */;
-INSERT INTO `category` VALUES (1,'Fridge',_binary ''),(2,'Pantry',_binary ''),(3,'Pantry',_binary '');
+INSERT INTO `category` VALUES (1,'Fridge',_binary ''),(2,'Pantry',_binary ''),(3,'Freezer',_binary '');
 /*!40000 ALTER TABLE `category` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -63,7 +63,7 @@ CREATE TABLE `fooditem` (
   KEY `UserID_idx` (`UserID`),
   CONSTRAINT `CategoryID` FOREIGN KEY (`CategoryID`) REFERENCES `category` (`CategoryID`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `UserID` FOREIGN KEY (`UserID`) REFERENCES `user` (`UserID`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -72,7 +72,7 @@ CREATE TABLE `fooditem` (
 
 LOCK TABLES `fooditem` WRITE;
 /*!40000 ALTER TABLE `fooditem` DISABLE KEYS */;
-INSERT INTO `fooditem` VALUES (2,'Fridge exp Updatedsss',1,4,'2022-06-01','2022-06-01',_binary '','src/fooditem/2022-05-31T18_39_45.101Zt.jpg',_binary '\0'),(3,'Fridge exp Updated',1,4,'2022-06-01','2022-06-01',_binary '','src/fooditem/2022-05-31T18_33_59.339ZWhatsApp Image 2022-05-22 at 12.36.34 PM.jpeg',_binary '\0');
+INSERT INTO `fooditem` VALUES (2,'Fridge exp Updatedsss',1,4,'2022-06-01','2022-06-01',_binary '','src/fooditem/2022-05-31T18_39_45.101Zt.jpg',_binary '\0'),(3,'Fridge exp Updated',1,4,'2022-06-01','2022-06-01',_binary '','src/fooditem/2022-05-31T18_39_45.101Zt.jpg',_binary '\0'),(4,'burger',2,4,'2022-06-02','2022-06-01',_binary '','src/fooditem/2022-06-01T00_13_11.000Zt.jpg',NULL);
 /*!40000 ALTER TABLE `fooditem` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -116,4 +116,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-05-31 23:50:42
+-- Dump completed on 2022-06-01  5:16:45
