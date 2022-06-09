@@ -39,8 +39,8 @@ exports.update = async (req, res, next) => {
       status: httpStatus.BAD_REQUEST,
       message: "BAD REQUEST"
     }))
-    Data.ImageSrc = req.file.path.replace(/\\/g, "/")
     Data.FoodItemID = req.params.id
+    delete Data.ImageSrc
     var result = await fooditem.update(Data)
     if (result.response) {
       res.status(httpStatus.OK);

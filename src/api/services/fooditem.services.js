@@ -165,7 +165,7 @@ exports.notificationDates = async (id) => {
         await db.authenticate();
         await models.fooditem.update({ IsExpired: true }, { where: { ExpiryDate: { [Op.lte]: dateToday } } })
         var result = await models.fooditem.findAll({ where: { UserID: id } })
-        if (result == null) {
+        if (result == null || result.length==0) {
             return {
                 resposne: false, error: new APIError({
                     message: "NOT FOUND",
