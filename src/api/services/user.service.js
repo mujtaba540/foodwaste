@@ -3,8 +3,8 @@ var initModels = require('../models/init-models');
 var models = initModels(db)
 const APIError = require('../errors/api-error');
 const httpStatus = require('http-status');
-
-
+const bcrypt=require('bcrypt')
+const jwt =require('jsonwebtoken')
 exports.register = async (Data) => {
     try {
         console.log(Data)
@@ -124,19 +124,40 @@ exports.active = async () => {
 exports.login = async (Data) => {
     try {
         await db.authenticate()
-        var result = await models.user.findOne({
-            where: { Email: Data.Email, Password: Data.Password },
-            include: [{
-                model: models.fooditem,
-                as: "fooditems"
-            }]
+
+         var result = await models.user.findOne({
+            where: { Email: Data.Email}
         })
         if (result != null) {
-            return {
-                data: result,
-                response: true
+            var comparePwd=await bcrypt.compare(Data.Password,result.Password)
+            if(comparePwd){
+                 var data = await models.user.findOne({
+                    where: { Email: Data.Email },
+                    include: [{
+                        model: models.fooditem,
+                        as: "fooditems"
+                    }]
+                })
+                var payload={
+                    username:data.Email
+                }
+                var token=jwt.sign(payload,process.env.HASH,{expiresIn:'1d'})
+                return {
+                    data: data,
+                    token:token,
+                    response: true
+                }
+            }else {
+                return {
+                    response: false,
+                    error: new APIError({
+                        status: httpStatus.NOT_FOUND,
+                        message: "Incorrect Email or Passowrd"
+                    })
+    
+                }
             }
-        } else {
+        }else {
             return {
                 response: false,
                 error: new APIError({

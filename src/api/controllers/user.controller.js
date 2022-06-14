@@ -2,7 +2,7 @@ const httpStatus = require('http-status');
 const user = require('../services/user.service');
 const APIError = require('../errors/api-error');
 const { isEmpty } = require('lodash');
-
+const bcrypt=require('bcrypt')
 
 
 /**
@@ -17,6 +17,7 @@ exports.register = async (req, res, next) => {
       message:"BAD REQUEST"
     }))
     Data.IsActive=true
+    Data.Password=await bcrypt.hash(Data.Password,10)
     var result=await user.register(Data);
     if(result.response){
         res.status(httpStatus.CREATED);
@@ -128,6 +129,7 @@ exports.login=async(req,res,next)=>{
         res.json({
             Status:{code:httpStatus.OK,"message":"Success"},
             Data:{
+              token:result.token,
               data:result.data
             }
         })
