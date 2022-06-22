@@ -3,16 +3,16 @@ module.exports = function(sequelize, DataTypes) {
   return sequelize.define('fooditem', {
     FoodItemID: {
       autoIncrement: true,
-      type: DataTypes.INTEGER.UNSIGNED,
+      type: DataTypes.BIGINT,
       allowNull: false,
       primaryKey: true
     },
     Name: {
-      type: DataTypes.STRING(45),
+      type: DataTypes.TEXT,
       allowNull: true
     },
     CategoryID: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.BIGINT,
       allowNull: true,
       references: {
         model: 'category',
@@ -20,7 +20,7 @@ module.exports = function(sequelize, DataTypes) {
       }
     },
     UserID: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.BIGINT,
       allowNull: true,
       references: {
         model: 'user',
@@ -40,42 +40,24 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: true
     },
     ImageSrc: {
-      type: DataTypes.STRING(256),
+      type: DataTypes.TEXT,
       allowNull: true
     },
     IsExpired: {
       type: DataTypes.BOOLEAN,
       allowNull: true
-    },
-    barcode: {
-      type: DataTypes.STRING(1111),
-      allowNull: true
     }
   }, {
     sequelize,
     tableName: 'fooditem',
+    schema: 'foodwaste',
     timestamps: false,
     indexes: [
       {
-        name: "PRIMARY",
+        name: "fooditem_pkey",
         unique: true,
-        using: "BTREE",
         fields: [
           { name: "FoodItemID" },
-        ]
-      },
-      {
-        name: "CategoryID_idx",
-        using: "BTREE",
-        fields: [
-          { name: "CategoryID" },
-        ]
-      },
-      {
-        name: "UserID_idx",
-        using: "BTREE",
-        fields: [
-          { name: "UserID" },
         ]
       },
     ]
