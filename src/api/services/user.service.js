@@ -141,7 +141,7 @@ exports.login = async (Data) => {
                 var payload={
                     username:data.Email
                 }
-                var token=jwt.sign(payload,process.env.HASH,{expiresIn:'1d'})
+                var token= await jwt.sign(payload,process.env.HASH,{expiresIn:"1d"})
                 return {
                     data: data,
                     token:token,

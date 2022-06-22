@@ -15,9 +15,9 @@ const error = require('../api/middlewares/error');
 */
 const app = express();
 
-
+app.set('view engine', 'ejs');
 app.use('/src/fooditem',express.static('src/fooditem/'))
-
+app.use(express.static('../api/public'))
 // request logging. dev: console | production: file
 app.use(morgan(logs));
 

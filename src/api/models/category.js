@@ -8,7 +8,7 @@ module.exports = function(sequelize, DataTypes) {
       primaryKey: true
     },
     Name: {
-      type: DataTypes.TEXT,
+      type: DataTypes.STRING(45),
       allowNull: true
     },
     IsActive: {
@@ -18,12 +18,20 @@ module.exports = function(sequelize, DataTypes) {
   }, {
     sequelize,
     tableName: 'category',
-    schema: 'foodwaste',
     timestamps: false,
     indexes: [
       {
-        name: "category_pkey",
+        name: "PRIMARY",
         unique: true,
+        using: "BTREE",
+        fields: [
+          { name: "CategoryID" },
+        ]
+      },
+      {
+        name: "categoryID_UNIQUE",
+        unique: true,
+        using: "BTREE",
         fields: [
           { name: "CategoryID" },
         ]

@@ -3,13 +3,15 @@ var initModels = require('../models/init-models');
 var models = initModels(db)
 const APIError = require('../errors/api-error');
 const httpStatus = require('http-status');
-const { Op } = require("sequelize");
+const { Op, where } = require("sequelize");
+const qr = require("qrcode");
 
 
 exports.create = async (Data) => {
     try {
         await db.authenticate()
-        await models.fooditem.create(Data)
+        var data=await models.fooditem.create(Data)
+
         return {
             response: true
         }
@@ -30,6 +32,11 @@ exports.active = async () => {
         await db.authenticate();
         var result = await models.fooditem.findAll({ where: { IsActive: true } })
         if (result !== null) {
+            for (var i=0;i<result.length;i++){
+                code=await qr.toDataURL(process.env.IP+result[i].FoodItemID)
+                result[i].barcode=code
+    
+            }
             return {
                 response: true,
                 data: result
@@ -47,7 +54,13 @@ exports.id = async (id) => {
     try {
         await db.authenticate();
         var result = await models.fooditem.findOne({
-            where: { FoodItemID: id, IsActive: true }
+            where: { FoodItemID: id, IsActive: true },
+            include:[
+                {
+                    model:models.category,
+                    as:"Category"
+                }
+            ]
         })
         if (result == null || result.length == 0) {
             return {
@@ -82,7 +95,6 @@ exports.delete = async (id) => {
         }
         return {
             response: true,
-            data: result
         }
     } catch (error) {
         return { response: false, error: new APIError(httpStatus.INTERNAL_SERVER_ERROR) }
@@ -126,6 +138,12 @@ exports.itemsByUserId = async (id) => {
                 })
             }
         }
+        for (var i=0;i<result.length;i++){
+            code=await qr.toDataURL(process.env.IP+result[i].FoodItemID)
+            result[i].barcode=code
+
+        }
+
         return {
             response: true,
             data: result
@@ -150,6 +168,12 @@ exports.itemsByCategoryId = async (userid,catid) => {
                 })
             }
         }
+        for (var i=0;i<result.length;i++){
+            code=await qr.toDataURL(process.env.IP+result[i].FoodItemID)
+            result[i].barcode=code
+
+        }
+
         return {
             response: true,
             data: result
